@@ -74,10 +74,12 @@ def _resolve_store() -> Path:
         env_root=os.environ.get("NHQ_ROOT"),
         config_root=get_config("nhq.root"),
     )
-    return store_path(root=root, identity=identity, subpath=get_show_prefix())
+    show_prefix = get_show_prefix()
+    store = store_path(root=root, identity=identity, subpath=show_prefix)
+    return store, show_prefix
 
 
-def _link_store(store: Path) -> None:
+def _link_store(store: Path, show_prefix: str) -> None:
     link = Path("nhq")
     try:
         if link.is_symlink():
@@ -96,7 +98,7 @@ def _link_store(store: Path) -> None:
         else:
             link.symlink_to(store.absolute())
             verb = "linked"
-        ensure_excluded("/" + get_show_prefix() + "nhq")
+        ensure_excluded("/" + show_prefix + "nhq")
     except OSError as exc:
         raise CliError(f"cannot link ./nhq: {exc}") from exc
 
@@ -121,14 +123,14 @@ def cmd_init(show_help: bool) -> None:
     if show_help:
         print_help(HELP_INIT)
         return
-    store = _resolve_store()
+    store, show_prefix = _resolve_store()
     existed = store.exists()
     try:
         store.mkdir(parents=True, exist_ok=True)
     except OSError as exc:
         raise CliError(f"cannot create store: {exc}") from exc
     print_status("store exists" if existed else "created store", store)
-    _link_store(store)
+    _link_store(store, show_prefix)
 
 
 @cli.command("link", add_help_option=False)
@@ -137,13 +139,13 @@ def cmd_link(show_help: bool) -> None:
     if show_help:
         print_help(HELP_LINK)
         return
-    store = _resolve_store()
+    store, show_prefix = _resolve_store()
     if not store.exists():
         raise CliError(
             "no store for this repo",
             tip="create it first with: nhq init",
         )
-    _link_store(store)
+    _link_store(store, show_prefix)
 
 
 def _err() -> Console:
