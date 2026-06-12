@@ -1,0 +1,71 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatch-vcs", "hatchling"]
+
+[project]
+authors = [{ name = "Kentaro Wada" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Utilities",
+]
+dependencies = ["click>=8", "rich>=13", "typing-extensions>=4"]
+description = "Private per-repo notes alongside a git repo, kept out of git and backed up via storage you already sync."
+dynamic = ["version"]
+keywords = ["cli", "ghq", "git", "notes", "private"]
+license = "MIT"
+name = "nhq"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.scripts]
+nhq = "nhq._cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/wkentaro/nhq"
+Issues = "https://github.com/wkentaro/nhq/issues"
+Repository = "https://github.com/wkentaro/nhq"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.ty.rules]
+all = "error"
+
+[tool.ruff.lint]
+select = [
+  "ANN", # flake8-annotations
+  "E",   # pycodestyle
+  "F",   # pyflakes
+  "I",   # isort
+  "UP",  # pyupgrade
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[dependency-groups]
+dev = [
+  "mdformat-frontmatter>=2.0.10",
+  "mdformat-gfm>=1.0.0",
+  "mdformat>=0.7",
+  "pytest-cov>=4",
+  "pytest-xdist>=3.8.0",
+  "pytest>=7",
+  "ruff>=0.15.9",
+  "taplo>=0.9",
+  "ty>=0.0.28",
+  "typos>=1.44",
+  "yamlfix>=1.17",
+]
