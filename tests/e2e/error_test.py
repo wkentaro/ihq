@@ -48,6 +48,20 @@ def test_store_creation_failure(cli: NhqCLI, tmp_path: Path) -> None:
     assert "cannot create store" in result.stderr
 
 
+def test_git_not_found(
+    cli: NhqCLI,
+    git_repo: GitRepo,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("PATH", str(tmp_path))  # a dir with no git binary
+
+    result = cli.run("init")
+
+    assert result.returncode == 1
+    assert "git not found" in result.stderr
+
+
 def test_unknown_command(cli: NhqCLI) -> None:
     result = cli.run("bogus")
 

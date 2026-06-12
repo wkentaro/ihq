@@ -51,11 +51,17 @@ class CliGroup(click.Group):
         except CliError as exc:
             print_error(str(exc), tip=exc.tip, usage=exc.usage)
             ctx.exit(2 if exc.usage else 1)
+        except FileNotFoundError:
+            print_error(
+                "git not found",
+                tip="install git and ensure it is on your PATH",
+            )
+            ctx.exit(1)
         except KeyboardInterrupt:
             ctx.exit(130)
 
 
-def _resolve_store() -> Path:
+def _resolve_store() -> tuple[Path, str]:
     if not is_git_repo():
         raise CliError("not a git repository")
 
