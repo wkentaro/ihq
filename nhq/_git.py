@@ -1,4 +1,5 @@
 import subprocess
+from pathlib import Path
 
 
 def _run(*args: str) -> subprocess.CompletedProcess[str]:
@@ -25,3 +26,18 @@ def get_config(key: str) -> str | None:
     if result.returncode != 0:
         return None
     return result.stdout.strip() or None
+
+
+def get_exclude_path() -> str:
+    return _run("rev-parse", "--git-path", "info/exclude").stdout.strip()
+
+
+def ensure_excluded(line: str) -> None:
+    exclude = Path(get_exclude_path())
+    content = exclude.read_text() if exclude.exists() else ""
+    if line in content.splitlines():
+        return
+    prefix = "" if content == "" or content.endswith("\n") else "\n"
+    exclude.parent.mkdir(parents=True, exist_ok=True)
+    with exclude.open("a") as file:
+        file.write(prefix + line + "\n")
