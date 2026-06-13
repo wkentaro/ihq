@@ -102,6 +102,19 @@ $ nhq root
 $ cd "$(nhq root)"
 ```
 
+### Store path
+
+`nhq path` prints this repo's store path, derived from the origin remote (and the
+subdirectory you run it in, for a subtree). It only derives the path, creating and
+linking nothing, so it works before `nhq init`:
+
+```console
+$ nhq path
+/home/you/nhq/github.com/wkentaro/labelme
+
+$ cd "$(nhq path)"
+```
+
 ## vs repoverlay
 
 [repoverlay](https://github.com/tylerbutler/repoverlay) uses the same mechanism
@@ -111,7 +124,7 @@ notes out to a synced store.
 
 - **Capture, not distribute**: notes flow out of the repo, not config in.
 - **Zero config**: the store path is derived from repo identity, not named.
-- **Two verbs**: `init` and `link`, nothing else.
+- **Two verbs**: `init` and `link` are all that change anything; `root` and `path` only print.
 
 ## Scope
 
