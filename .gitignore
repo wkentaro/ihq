@@ -10,6 +10,4 @@
 /.ruff_cache/
 
 # Environment
-/.env
-/.env.*
 /.venv/
