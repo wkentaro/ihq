@@ -13,6 +13,3 @@
 /.env
 /.env.*
 /.venv/
-
-# Tools
-/.claude/
