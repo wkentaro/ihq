@@ -1,5 +1,6 @@
 import contextlib
 import os
+import re
 import shutil
 from pathlib import Path
 from typing import Final
@@ -107,7 +108,11 @@ def _resolve_managed(arg: str, toplevel: Path) -> str:
 
 
 def _exclude_line(managed: str) -> str:
-    return "/" + managed
+    # Escape gitignore metacharacters so the literal path is matched: an
+    # unescaped '*', '?', '[' or '\' would make git read the line as a glob and
+    # fail to exclude the symlink, leaking it into `git status`.
+    escaped = re.sub(r"([\\*?\[])", r"\\\1", managed)
+    return "/" + escaped
 
 
 def _link_one(store: Path, managed: str, toplevel: Path) -> None:

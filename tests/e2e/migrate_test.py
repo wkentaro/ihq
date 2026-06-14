@@ -26,6 +26,19 @@ def test_migrate_file(cli: IhqCLI, git_repo: GitRepo) -> None:
     assert "linked" in result.stderr
 
 
+def test_migrate_escapes_glob_metacharacters_in_exclude(
+    cli: IhqCLI, git_repo: GitRepo
+) -> None:
+    (Path(git_repo.path) / "build[1]").write_text("x\n")
+
+    cli.run_ok("migrate", "build[1]")
+
+    assert "/build\\[1]" in exclude_lines(git_repo)
+    # The escape is load-bearing: an unescaped /build[1] is a glob and would not
+    # exclude the symlink, so prove git actually ignores it.
+    assert git_repo.git("status", "--porcelain") == ""
+
+
 def test_migrate_directory_preserves_content(cli: IhqCLI, git_repo: GitRepo) -> None:
     src = Path(git_repo.mkdir("scratch"))
     (src / "a.txt").write_text("a\n")
