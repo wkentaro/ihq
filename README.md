@@ -22,8 +22,9 @@ Two planes:
 
 - **The store** is `$IHQ_ROOT/<host>/<user>/<repo>/`: a mirror tree holding your
   externalized paths, each at its own repo-relative location. Lives in your
-  synced folder, shared across machines. A `.ihq` manifest at its root records
-  the managed set.
+  synced folder, shared across machines. Each managed directory carries an empty
+  `.ihqdir` marker, so the managed set is derived by scanning the store with no
+  separate index to keep in sync.
 - **The links** are the `ihq` symlinks plus their `.git/info/exclude` entries.
   Per-checkout and per-machine, never committed.
 
@@ -93,8 +94,8 @@ junk.
 ### Unlink
 
 `ihq unlink <path>` removes one symlink and its exclude entry; `ihq unlink --all`
-does every path on this checkout. It never touches the store or the manifest, so
-your content stays safe in the synced root:
+does every path on this checkout. It never touches the store, so your content
+stays safe in the synced root:
 
 ```console
 $ ihq unlink scratch.md
@@ -105,7 +106,8 @@ unlinked /home/you/code/labelme/scratch.md
 
 `ihq list` shows every managed path for this repo and its status on this
 checkout, the same wherever in the repo you run it. `*` is linked here, a space
-is in the store but not linked here, `!` is missing from the store. Read-only:
+is in the store but not linked here, `!` is a link here whose store slot is gone.
+Read-only:
 
 ```console
 $ ihq list

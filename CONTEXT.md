@@ -17,9 +17,10 @@ repo-relative location (a mirror tree). The "headquarters" of the model.
 _Avoid_: notes folder, backup dir.
 
 **Managed path**:
-A repo-root-relative path that has been externalized into the store and recorded
-in the manifest. The unit every ihq verb operates on. It is identical on every
-machine because it is repo-relative, not tied to where the repo is checked out.
+A repo-root-relative path that has been externalized into the store. The unit
+every ihq verb operates on. The store's structure is itself the record of the
+set, so there is no separate index. It is identical on every machine because it
+is repo-relative, not tied to where the repo is checked out.
 _Avoid_: file, entry, target.
 
 **Migratable**:
@@ -34,12 +35,13 @@ store. Per-checkout and per-machine, never committed (it lives only in the
 working tree and is hidden via `.git/info/exclude`). A repo can have many.
 _Avoid_: alias, shortcut.
 
-**Manifest**:
-The record, kept in the store as the reserved file `.ihq`, of every managed path
-for the repo. Canonical and machine-shared (it syncs with the store), so any
-checkout knows the full set to link. Written only by `migrate`; `link` and
-`unlink` never touch it.
-_Avoid_: index, database, lockfile.
+**Marker**:
+An empty reserved file, `.ihqdir`, placed inside a managed directory to mark it
+as a managed unit rather than an intermediate mirror directory that only holds
+deeper managed paths. It lets any checkout derive the full managed set by
+scanning the synced store, with no separate index to keep in sync. A managed
+file needs none: its presence as a leaf is already unambiguous.
+_Avoid_: manifest, index, sentinel, flag file.
 
 **Root**:
 The configurable base directory under which every store lives (resolved from
